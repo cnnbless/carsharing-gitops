@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "carsharing.fullname" . }}-order
+  labels:
+    {{- include "carsharing.labels" . | nindent 4 }}
+    app: order-service
+spec:
+  replicas: {{ .Values.orderService.replicas }}
+  selector:
+    matchLabels:
+      app: order-service
+      instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{- include "carsharing.labels" . | nindent 8 }}
+        app: order-service
+        instance: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: order-service
+          image: "{{ .Values.orderService.image.repository }}:{{ .Values.orderService.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.orderService.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "carsharing.fullname" . }}-config
+            - secretRef:
+                name: { { .Values.existingSecret | default (printf "%s-secret" (include "carsharing.fullname" .)) } }
+          resources:
+            {{- toYaml .Values.orderService.resources | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.orderService.port }}
+            initialDelaySeconds: 50
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.orderService.port }}
+            initialDelaySeconds: 90
+            periodSeconds: 15
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "carsharing.fullname" . }}-order
+  labels:
+    {{- include "carsharing.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.orderService.port }}
+      targetPort: {{ .Values.orderService.port }}
+      protocol: TCP
+  selector:
+    app: order-service
+    instance: {{ .Release.Name }}

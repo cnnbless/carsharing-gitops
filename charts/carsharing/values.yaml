@@ -1,0 +1,60 @@
+config:
+  profile: "prod"
+  defaultRole: "CUSTOMER"
+  logLevel: "INFO"
+
+secrets:
+  dbPassword: "K8sSecureDevPassword2026!"
+  jwtSecret: "c2hhcmluZy1zZWNyZXQta2V5LWZvci10b2tlbnM="
+
+ingress:
+  enabled: true
+  host: "carsharing.local"
+
+postgres:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 1Gi
+
+userService:
+  replicas: 2
+  image:
+    repository: "carsharing/user-service"
+    tag: "1.0.0"
+  port: 8082
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+fleetService:
+  replicas: 2
+  image:
+    repository: "carsharing/fleet-service"
+    tag: "1.0.0"
+  port: 8081
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+orderService:
+  replicas: 2
+  image:
+    repository: "carsharing/order-service"
+    tag: "1.0.0"
+  port: 8083
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"

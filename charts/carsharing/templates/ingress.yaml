@@ -1,0 +1,35 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "carsharing.fullname" . }}-ingress
+  labels:
+    {{- include "carsharing.labels" . | nindent 4 }}
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /api/users
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "carsharing.fullname" . }}-user
+                port:
+                  number: {{ .Values.userService.port }}
+          - path: /api/cars
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "carsharing.fullname" . }}-fleet
+                port:
+                  number: {{ .Values.fleetService.port }}
+          - path: /api/orders
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "carsharing.fullname" . }}-order
+                port:
+                  number: {{ .Values.orderService.port }}
+  {{- end }}

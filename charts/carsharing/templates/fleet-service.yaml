@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "carsharing.fullname" . }}-fleet
+  labels:
+    {{- include "carsharing.labels" . | nindent 4 }}
+    app: fleet-service
+spec:
+  replicas: {{ .Values.fleetService.replicas }}
+  selector:
+    matchLabels:
+      app: fleet-service
+      instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{- include "carsharing.labels" . | nindent 8 }}
+        app: fleet-service
+        instance: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: fleet-service
+          image: "{{ .Values.fleetService.image.repository }}:{{ .Values.fleetService.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.fleetService.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "carsharing.fullname" . }}-config
+            - secretRef:
+                name: { { .Values.existingSecret | default (printf "%s-secret" (include "carsharing.fullname" .)) } }
+          resources:
+            {{- toYaml .Values.fleetService.resources | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.fleetService.port }}
+            initialDelaySeconds: 50
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.fleetService.port }}
+            initialDelaySeconds: 90
+            periodSeconds: 15
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "carsharing.fullname" . }}-fleet
+  labels:
+    {{- include "carsharing.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.fleetService.port }}
+      targetPort: {{ .Values.fleetService.port }}
+      protocol: TCP
+  selector:
+    app: fleet-service
+    instance: {{ .Release.Name }}

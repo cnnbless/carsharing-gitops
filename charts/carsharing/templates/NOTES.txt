@@ -1,0 +1,13 @@
+Застосунок Carsharing розгорнуто.
+Ім'я релізу: {{ .Release.Name }}
+Простір імен: {{ .Release.Namespace }}
+
+{{- if .Values.ingress.enabled }}
+Доступ до API через Ingress налаштовано за адресою:
+  http://{{ .Values.ingress.host }}/api/users
+  http://{{ .Values.ingress.host }}/api/cars
+  http://{{ .Values.ingress.host }}/api/orders
+{{- else }}
+Ingress вимкнено. Використовуйте port-forward для доступу:
+  kubectl port-forward svc/{{ include "carsharing.fullname" . }}-user 8082:8082 -n {{ .Release.Namespace }}
+{{- end }}

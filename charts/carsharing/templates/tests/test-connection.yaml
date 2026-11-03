@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "carsharing.fullname" . }}-test-connection"
+  labels:
+    {{- include "carsharing.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+    - name: tcp-check
+      image: bash:5
+      command: ['bash', '-c']
+      args:
+        - |
+          FAILED=0
+          check() {
+            if timeout 5 bash -c "echo > /dev/tcp/$1/$2" 2>/dev/null; then
+              echo "OK   $1:$2"
+            else
+              echo "FAIL $1:$2"
+              FAILED=1
+            fi
+          }
+          check {{ include "carsharing.fullname" . }}-user {{ .Values.userService.port }}
+          check {{ include "carsharing.fullname" . }}-fleet {{ .Values.fleetService.port }}
+          check {{ include "carsharing.fullname" . }}-order {{ .Values.orderService.port }}
+          {{- if .Values.postgres.enabled }}
+          check {{ include "carsharing.fullname" . }}-postgres 5432
+          {{- end }}
+          exit $FAILED

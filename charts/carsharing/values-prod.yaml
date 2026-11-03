@@ -1,0 +1,26 @@
+config:
+  logLevel: "WARN"
+
+ingress:
+  enabled: true
+  host: "prod.carsharing.local"
+
+postgres:
+  persistence:
+    enabled: true
+    size: 1Gi
+
+userService:
+  replicas: 3
+  image:
+    tag: "1.1.0"
+
+fleetService:
+  replicas: 3
+  image:
+    tag: "1.1.0"
+
+orderService:
+  replicas: 3
+  image:
+    tag: "1.1.0"
