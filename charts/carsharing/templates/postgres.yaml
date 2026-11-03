@@ -55,7 +55,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: "{{ .Values.existingSecret | default (printf \"%s-secret\" (include \"carsharing.fullname\" .)) }}"
+                  name: {{ .Values.existingSecret | default (printf "%s-secret" (include "carsharing.fullname" .)) | quote }}
                   key: DB_PASSWORD
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
