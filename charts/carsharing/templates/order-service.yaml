@@ -31,7 +31,7 @@ spec:
             - configMapRef:
                 name: {{ include "carsharing.fullname" . }}-config
             - secretRef:
-                name: { { .Values.existingSecret | default (printf "%s-secret" (include "carsharing.fullname" .)) } }
+                name: { { .Values.existingSecret | default (printf "%s-secret" (include "carsharing.fullname" .)) }}
           resources:
             {{- toYaml .Values.orderService.resources | nindent 12 }}
           readinessProbe:
