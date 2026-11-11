@@ -16,11 +16,11 @@ userService:
     pullPolicy: IfNotPresent
   resources:
     requests:
-      cpu: "50m"
-      memory: "128Mi"
-    limits:
-      cpu: "250m"
+      cpu: "100m"
       memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
 
 fleetService:
   replicas: 1
@@ -30,11 +30,11 @@ fleetService:
     pullPolicy: IfNotPresent
   resources:
     requests:
-      cpu: "50m"
-      memory: "128Mi"
-    limits:
-      cpu: "250m"
+      cpu: "100m"
       memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
 
 orderService:
   replicas: 1
@@ -44,12 +44,12 @@ orderService:
     pullPolicy: IfNotPresent
   resources:
     requests:
-      cpu: "50m"
-      memory: "128Mi"
-    limits:
-      cpu: "250m"
+      cpu: "100m"
       memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
 
 config:
   profile: "dev"
-  logLevel: "DEBUG"
+  logLevel: "INFO"
