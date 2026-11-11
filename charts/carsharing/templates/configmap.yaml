@@ -10,3 +10,5 @@ data:
   LOGGING_LEVEL_ROOT: {{ .Values.config.logLevel | quote }}
   SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ include "carsharing.fullname" . }}-postgres:5432/user_db"
   SPRING_DATASOURCE_USERNAME: "postgres"
+  USER_SERVICE_HOST: "{{ include "carsharing.fullname" . }}-user"
+  FLEET_SERVICE_HOST: "{{ include "carsharing.fullname" . }}-fleet"

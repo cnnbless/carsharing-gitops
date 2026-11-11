@@ -1,11 +1,13 @@
+existingSecret: ""
+
 config:
   profile: "prod"
   defaultRole: "CUSTOMER"
   logLevel: "INFO"
 
 secrets:
-  dbPassword: "K8sSecureDevPassword2026!"
-  jwtSecret: "c2hhcmluZy1zZWNyZXQta2V5LWZvci10b2tlbnM="
+  dbPassword: ""
+  jwtSecret: ""
 
 ingress:
   enabled: true
@@ -20,8 +22,9 @@ postgres:
 userService:
   replicas: 2
   image:
-    repository: "carsharing/user-service"
+    repository: "cnnblesss/carsharing-user-service"
     tag: "1.0.0"
+    pullPolicy: IfNotPresent
   port: 8082
   resources:
     requests:
@@ -34,8 +37,9 @@ userService:
 fleetService:
   replicas: 2
   image:
-    repository: "carsharing/fleet-service"
+    repository: "cnnblesss/carsharing-fleet-service"
     tag: "1.0.0"
+    pullPolicy: IfNotPresent
   port: 8081
   resources:
     requests:
@@ -48,8 +52,9 @@ fleetService:
 orderService:
   replicas: 2
   image:
-    repository: "carsharing/order-service"
+    repository: "cnnblesss/carsharing-order-service"
     tag: "1.0.0"
+    pullPolicy: IfNotPresent
   port: 8083
   resources:
     requests:

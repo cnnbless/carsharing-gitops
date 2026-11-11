@@ -24,27 +24,35 @@ spec:
       containers:
         - name: fleet-service
           image: "{{ .Values.fleetService.image.repository }}:{{ .Values.fleetService.image.tag }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.fleetService.image.pullPolicy | default "IfNotPresent" }}
           ports:
             - containerPort: {{ .Values.fleetService.port }}
+          env:
+            - name: APP_VERSION
+              value: {{ .Values.fleetService.image.tag | quote }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret | default (printf "%s-secret" (include "carsharing.fullname" .)) | quote }}
+                  key: DB_PASSWORD
           envFrom:
             - configMapRef:
                 name: {{ include "carsharing.fullname" . }}-config
             - secretRef:
-                name: {{ .Values.existingSecret | quote }}
+                name: {{ .Values.existingSecret | default (printf "%s-secret" (include "carsharing.fullname" .)) | quote }}
           resources:
             {{- toYaml .Values.fleetService.resources | nindent 12 }}
           readinessProbe:
             tcpSocket:
               port: {{ .Values.fleetService.port }}
-            initialDelaySeconds: 50
-            periodSeconds: 10
-            failureThreshold: 5
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 6
           livenessProbe:
             tcpSocket:
               port: {{ .Values.fleetService.port }}
-            initialDelaySeconds: 90
-            periodSeconds: 15
+            initialDelaySeconds: 30
+            periodSeconds: 10
             failureThreshold: 3
 ---
 apiVersion: v1

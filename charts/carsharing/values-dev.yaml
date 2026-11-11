@@ -1,11 +1,12 @@
 existingSecret: carsharing-secret
 
 ingress:
-  enabled: false
+  enabled: true
+  host: carsharing.local
 
 postgres:
   persistence:
-    enabled: false # Для dev-середовища диск не зберігається між перезапусками
+    enabled: false
 
 userService:
   replicas: 1
@@ -27,6 +28,13 @@ fleetService:
     repository: "cnnblesss/carsharing-fleet-service"
     tag: "1.0.0"
     pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"
 
 orderService:
   replicas: 1
@@ -34,6 +42,13 @@ orderService:
     repository: "cnnblesss/carsharing-order-service"
     tag: "1.0.0"
     pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"
 
 config:
   profile: "dev"
