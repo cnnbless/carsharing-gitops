@@ -30,6 +30,8 @@ spec:
           ports:
             - containerPort: {{ .Values.userService.port }}
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:TieredStopAtLevel=1 -Xmx192m"
             - name: APP_VERSION
               value: {{ .Values.userService.image.tag | quote }}
             - name: SPRING_DATASOURCE_PASSWORD
@@ -47,13 +49,13 @@ spec:
           readinessProbe:
             tcpSocket:
               port: {{ .Values.userService.port }}
-            initialDelaySeconds: 15
+            initialDelaySeconds: 10
             periodSeconds: 5
-            failureThreshold: 12
+            failureThreshold: 30
           livenessProbe:
             tcpSocket:
               port: {{ .Values.userService.port }}
-            initialDelaySeconds: 90
+            initialDelaySeconds: 180
             periodSeconds: 15
             failureThreshold: 5
   strategy:
