@@ -26,7 +26,7 @@ userService:
   replicas: 5
   image:
     repository: "cnnblesss/carsharing-user-service"
-    tag: "1.1.0"
+    tag: "1.2.0"
     pullPolicy: IfNotPresent
   resources:
     requests:
