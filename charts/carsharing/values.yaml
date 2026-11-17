@@ -1,5 +1,9 @@
 existingSecret: ""
 
+rollout:
+  enabled: false
+  strategy: {}
+
 config:
   profile: "prod"
   defaultRole: "CUSTOMER"
