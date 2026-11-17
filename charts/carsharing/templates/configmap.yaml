@@ -8,6 +8,7 @@ data:
   SPRING_PROFILES_ACTIVE: {{ .Values.config.profile | quote }}
   APP_DEFAULT_ROLE: {{ .Values.config.defaultRole | quote }}
   LOGGING_LEVEL_ROOT: {{ .Values.config.logLevel | quote }}
+  SPRING_MAIN_LAZY_INITIALIZATION: "true"
   SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ include "carsharing.fullname" . }}-postgres:5432/user_db"
   SPRING_DATASOURCE_USERNAME: "postgres"
   USER_SERVICE_HOST: "{{ include "carsharing.fullname" . }}-user"
